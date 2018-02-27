@@ -16,6 +16,7 @@ namespace University.Models.Tests
     public void Dispose()
     {
       Student.DeleteAll();
+      Course.DeleteAll();
     }
 
     [TestMethod]
@@ -41,6 +42,36 @@ namespace University.Models.Tests
 
       //Assert
       Assert.AreEqual(testStudent, foundStudent);
+    }
+
+    [TestMethod]
+    public void DeleteAll_DeleteAllStudents_Void()
+    {
+      Student testStudent = new Student("Kevin Jones", new DateTime());
+      testStudent.Save();
+
+      Student.DeleteAll();
+       int result = Student.GetAll().Count;
+
+      Assert.AreEqual(0, result);
+    }
+
+    [TestMethod]
+    public void Delete_RemovesStudentFromDatabase_Void()
+    {
+      //Arrange
+      Student testStudent = new Student("Kevin Jones", new DateTime());
+      Student testStudent2 = new Student("Joe Smith", new DateTime());
+      testStudent.Save();
+      testStudent2.Save();
+
+      //Act
+
+      testStudent.Delete();
+      List<Student> allStudents = Student.GetAll();
+
+      //Assert
+      Assert.AreEqual(1, allStudents.Count);
     }
   }
 }
