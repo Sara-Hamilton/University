@@ -28,5 +28,19 @@ namespace University.Models.Tests
 
       CollectionAssert.AreEqual(testList, result);
     }
+
+    [TestMethod]
+    public void Find_FindsStudentInDatabase_Student()
+    {
+      //Arrange
+      Student testStudent = new Student("Kevin Jones", new DateTime());
+      testStudent.Save();
+
+      //Act
+      Student foundStudent = Student.Find(testStudent.GetId());
+
+      //Assert
+      Assert.AreEqual(testStudent, foundStudent);
+    }
   }
 }

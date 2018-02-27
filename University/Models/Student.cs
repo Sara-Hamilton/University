@@ -17,6 +17,31 @@ namespace University.Models
       _enrollDate = date;
     }
 
+    public int GetId()
+    {
+      return _id;
+    }
+
+    public string GetName()
+    {
+      return _name;
+    }
+
+    public void SetName(string name)
+    {
+      _name = name;
+    }
+
+    public DateTime GetEnrollDate()
+    {
+      return _enrollDate;
+    }
+
+    public void SetEnrollDate(DateTime date)
+    {
+      _enrollDate = date;
+    }
+
     public override bool Equals(System.Object otherStudent)
     {
       if (!(otherStudent is Student))
@@ -90,6 +115,40 @@ namespace University.Models
       conn.Close();
       if (conn != null)
         conn.Dispose();
+    }
+
+    public static Student Find(int id)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"SELECT * FROM `students` WHERE id = @thisId;";
+
+      cmd.Parameters.Add(new MySqlParameter("@thisId", id));
+
+      MySqlDataReader rdr = cmd.ExecuteReader();
+
+      int studentId = 0;
+      string studentName = "";
+      DateTime studentEnrollDate = DateTime.Now;
+
+      while (rdr.Read())
+      {
+        studentId = rdr.GetInt32(0);
+        studentName = rdr.GetString(1);
+        studentEnrollDate = rdr.GetDateTime(2);
+      }
+
+      Student foundStudent = new Student(studentName, studentEnrollDate, studentId);
+
+      conn.Close();
+      if (conn !=null)
+      {
+        conn.Dispose();
+      }
+
+      return foundStudent;
     }
   }
 }
