@@ -9,7 +9,7 @@ namespace University.Controllers
     [HttpGet("/")]
     public ActionResult Index()
     {
-      return View("Index", UniversityModel.GetString());
+      return View("Index", "Hello World");
     }
   }
 }
