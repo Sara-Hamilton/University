@@ -1,0 +1,17 @@
+@{
+  Layout = "_Layout";
+}
+
+<h2>Students</h2>
+@if (Model.Count != 0)
+{
+  <ul>
+    @foreach (var student in Model)
+    {
+      <li><a href='/students/@student.GetId()'>@student.GetName()</a></li>
+    }
+  </ul>
+}
+
+<h4><a href="/students/new">Add A New Student</a></h4>
+<h4><a href="/">Return To Home</a></h4>

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using University.Models;
+using System;
+using System.Collections.Generic;
 
 namespace University.Controllers
 {
@@ -10,6 +12,12 @@ namespace University.Controllers
     public ActionResult Index()
     {
       return View("Index", "Hello World");
+    }
+
+    [HttpGet("/success")]
+    public ActionResult Success()
+    {
+      return View();
     }
   }
 }
