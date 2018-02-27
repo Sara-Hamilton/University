@@ -109,7 +109,7 @@ namespace University.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"TRUNCATE TABLE students";
+      cmd.CommandText = @"TRUNCATE TABLE students;TRUNCATE TABLE students_courses;";
       cmd.ExecuteNonQuery();
 
       conn.Close();
@@ -156,7 +156,7 @@ namespace University.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM students WHERE id = @thisId;";
+      cmd.CommandText = @"DELETE FROM students WHERE id = @thisId; DELETE from students_courses WHERE student_id = @thisId;";
 
       MySqlParameter thisId = new MySqlParameter();
       thisId.ParameterName = "@thisId";
@@ -170,6 +170,53 @@ namespace University.Models
       {
         conn.Dispose();
       }
+    }
+
+    public List<Course> GetCourses()
+    {
+      List<Course> courses = new List<Course>();
+
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"
+        SELECT courses.* FROM students
+        JOIN students_courses ON (students.id = students_courses.student_id)
+        JOIN courses ON (students_courses.course_id = courses.id)
+        WHERE students.id = @ThisId";
+      cmd.Parameters.Add(new MySqlParameter("@ThisId", _id));
+      MySqlDataReader rdr = cmd.ExecuteReader();
+      while(rdr.Read())
+      {
+        int courseId = rdr.GetInt32(0);
+        string courseName = rdr.GetString(1);
+        string courseNumber = rdr.GetString(2);
+        Course newCourse = new Course(courseName, courseNumber, courseId);
+        courses.Add(newCourse);
+      }
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
+
+      return courses;
+    }
+
+    public void AddCourse(Course course)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"INSERT INTO students_courses (student_id, course_id) VALUES (@StudentId, @CourseId)";
+      cmd.Parameters.Add(new MySqlParameter("@CourseId", course.GetId()));
+      cmd.Parameters.Add(new MySqlParameter("@StudentId", _id));
+      cmd.ExecuteNonQuery();
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
     }
   }
 }

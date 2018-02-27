@@ -63,16 +63,34 @@ namespace University.Models.Tests
       //Arrange
       Course testCourse = new Course("intro to cs", "CS101");
       Course testCourse2 = new Course("intermediate cs", "CS102");
+      Student testStudent = new Student("Kevin Jones", new DateTime());
       testCourse.Save();
       testCourse2.Save();
+      testStudent.Save();
+      testStudent.AddCourse(testCourse);
 
       //Act
-
       testCourse.Delete();
       List<Course> allCourses = Course.GetAll();
+      List<Course> testStudentCourses = testStudent.GetCourses();
 
       //Assert
       Assert.AreEqual(1, allCourses.Count);
+      Assert.AreEqual(0, testStudentCourses.Count);
+    }
+
+    [TestMethod]
+    public void AddStudent_AddStudentToCourse_Void()
+    {
+      Student testStudent = new Student("Kevin Jones", new DateTime());
+      Course testCourse = new Course("intro to cs", "CS101");
+      testStudent.Save();
+      testCourse.Save();
+      testCourse.AddStudent(testStudent);
+
+      List<Student> result = testCourse.GetStudents();
+      Assert.AreEqual(1, result.Count);
+      CollectionAssert.AreEqual(new List<Student>{testStudent}, result);
     }
 
 

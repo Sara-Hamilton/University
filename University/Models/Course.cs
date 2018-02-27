@@ -107,7 +107,7 @@ namespace University.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"TRUNCATE TABLE courses";
+      cmd.CommandText = @"TRUNCATE TABLE courses;TRUNCATE TABLE students_courses;";
       cmd.ExecuteNonQuery();
 
       conn.Close();
@@ -154,7 +154,7 @@ namespace University.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM courses WHERE id = @thisId;";
+      cmd.CommandText = @"DELETE FROM courses WHERE id = @thisId; DELETE from students_courses WHERE course_id = @thisId;";
 
       MySqlParameter thisId = new MySqlParameter();
       thisId.ParameterName = "@thisId";
@@ -168,6 +168,53 @@ namespace University.Models
       {
         conn.Dispose();
       }
+    }
+
+    public void AddStudent(Student student)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"INSERT INTO students_courses (student_id, course_id) VALUES (@StudentId, @CourseId)";
+      cmd.Parameters.Add(new MySqlParameter("@CourseId", _id));
+      cmd.Parameters.Add(new MySqlParameter("@StudentId", student.GetId()));
+      cmd.ExecuteNonQuery();
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
+    }
+
+    public List<Student> GetStudents()
+    {
+      List<Student> students = new List<Student>();
+
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"
+        SELECT students.* FROM courses
+        JOIN students_courses ON (courses.id = students_courses.course_id)
+        JOIN students ON (students_courses.student_id = students.id)
+        WHERE courses.id = @ThisId;";
+      cmd.Parameters.Add(new MySqlParameter("@ThisId", _id));
+      MySqlDataReader rdr = cmd.ExecuteReader();
+      while(rdr.Read())
+      {
+        int studentId = rdr.GetInt32(0);
+        string studentName = rdr.GetString(1);
+        DateTime studentDate = rdr.GetDateTime(2);
+        Student newStudent = new Student(studentName, studentDate, studentId);
+        students.Add(newStudent);
+      }
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
+
+      return students;
     }
   }
 }
