@@ -18,12 +18,13 @@ namespace University.Controllers
     [HttpGet("/students/new")]
     public ActionResult CreateForm()
     {
-        return View();
+        List<Department> departments = Department.GetAll();
+        return View(departments);
     }
     [HttpPost("/students")]
     public ActionResult Create()
     {
-        Student newStudent = new Student(Request.Form["student-name"], DateTime.Parse(Request.Form["student-date"]));
+        Student newStudent = new Student(Request.Form["student-name"], DateTime.Parse(Request.Form["student-date"]), Int32.Parse(Request.Form["department-id"]));
         newStudent.Save();
         return RedirectToAction("Success", "Home");
     }

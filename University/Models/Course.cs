@@ -9,12 +9,14 @@ namespace University.Models
     private int _id;
     private string _name;
     private string _number;
+    private int _departmentId;
 
-    public Course(string name, string number, int id = 0)
+    public Course(string name, string number, int departmentId, int id = 0)
     {
       _name = name;
       _number = number;
       _id = id;
+      _departmentId = departmentId;
     }
 
     public int GetId()
@@ -40,6 +42,16 @@ namespace University.Models
       _number = number;
     }
 
+    public int GetDepartmentId()
+    {
+      return _departmentId;
+    }
+
+    public void SetDepartmentId(int departmentId)
+    {
+      _departmentId = departmentId;
+    }
+
     public override bool Equals(System.Object otherCourse)
     {
       if (!(otherCourse is Course))
@@ -49,7 +61,7 @@ namespace University.Models
       else
       {
         Course newCourse = (Course) otherCourse;
-        return _id == newCourse._id && _name == newCourse._name && _number == newCourse._number;
+        return _id == newCourse._id && _name == newCourse._name && _number == newCourse._number && _departmentId == newCourse._departmentId;
       }
     }
 
@@ -64,9 +76,10 @@ namespace University.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"INSERT INTO courses (name, number) VALUES (@name, @number)";
+      cmd.CommandText = @"INSERT INTO courses (name, number, department_id) VALUES (@name, @number, @department)";
       cmd.Parameters.Add(new MySqlParameter("@name", _name));
       cmd.Parameters.Add(new MySqlParameter("@number", _number));
+      cmd.Parameters.Add(new MySqlParameter("@department", _departmentId));
       cmd.ExecuteNonQuery();
 
       _id = (int)cmd.LastInsertedId;
@@ -91,7 +104,8 @@ namespace University.Models
         int courseId = rdr.GetInt32(0);
         string courseName = rdr.GetString(1);
         string courseNumber = rdr.GetString(2);
-        Course newCourse = new Course(courseName, courseNumber, courseId);
+        int departmentId = rdr.GetInt32(3);
+        Course newCourse = new Course(courseName, courseNumber, departmentId, courseId);
         allCourses.Add(newCourse);
       }
 
@@ -130,15 +144,17 @@ namespace University.Models
       int courseId = 0;
       string courseName = "";
       string courseNumber = "";
+      int departmentId = 0;
 
       while (rdr.Read())
       {
         courseId = rdr.GetInt32(0);
         courseName = rdr.GetString(1);
         courseNumber = rdr.GetString(2);
+        departmentId = rdr.GetInt32(3);
       }
 
-      Course foundCourse = new Course(courseName, courseNumber, courseId);
+      Course foundCourse = new Course(courseName, courseNumber, departmentId, courseId);
 
       conn.Close();
       if (conn !=null)
@@ -206,7 +222,8 @@ namespace University.Models
         int studentId = rdr.GetInt32(0);
         string studentName = rdr.GetString(1);
         DateTime studentDate = rdr.GetDateTime(2);
-        Student newStudent = new Student(studentName, studentDate, studentId);
+        int departmentId = rdr.GetInt32(3);
+        Student newStudent = new Student(studentName, studentDate, departmentId, studentId);
         students.Add(newStudent);
       }
 

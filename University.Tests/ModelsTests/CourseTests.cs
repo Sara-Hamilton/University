@@ -17,12 +17,13 @@ namespace University.Models.Tests
     {
       Student.DeleteAll();
       Course.DeleteAll();
+      Department.DeleteAll();
     }
 
     [TestMethod]
     public void GetAll_ReturnAllCourses_ListCourse()
     {
-      Course testCourse = new Course("intro to cs", "CS101");
+      Course testCourse = new Course("intro to cs", "CS101", 1);
       testCourse.Save();
       List<Course> testList = new List<Course>{testCourse};
       List<Course> result = Course.GetAll();
@@ -34,7 +35,7 @@ namespace University.Models.Tests
     [TestMethod]
     public void DeleteAll_DeleteAllCourses_Void()
     {
-      Course testCourse = new Course("intro to cs", "CS101");
+      Course testCourse = new Course("intro to cs", "CS101", 1);
       testCourse.Save();
 
       Course.DeleteAll();
@@ -47,7 +48,7 @@ namespace University.Models.Tests
     public void Find_FindsCourseInDatabase_Course()
     {
       //Arrange
-      Course testCourse = new Course("intro to cs", "CS101");
+      Course testCourse = new Course("intro to cs", "CS101", 1);
       testCourse.Save();
 
       //Act
@@ -61,9 +62,9 @@ namespace University.Models.Tests
     public void Delete_RemovesCourseFromDatabase_Void()
     {
       //Arrange
-      Course testCourse = new Course("intro to cs", "CS101");
-      Course testCourse2 = new Course("intermediate cs", "CS102");
-      Student testStudent = new Student("Kevin Jones", new DateTime());
+      Course testCourse = new Course("intro to cs", "CS101", 1);
+      Course testCourse2 = new Course("intermediate cs", "CS102", 1);
+      Student testStudent = new Student("Kevin Jones", new DateTime(), 1);
       testCourse.Save();
       testCourse2.Save();
       testStudent.Save();
@@ -82,8 +83,8 @@ namespace University.Models.Tests
     [TestMethod]
     public void AddStudent_AddStudentToCourse_Void()
     {
-      Student testStudent = new Student("Kevin Jones", new DateTime());
-      Course testCourse = new Course("intro to cs", "CS101");
+      Student testStudent = new Student("Kevin Jones", new DateTime(), 1);
+      Course testCourse = new Course("intro to cs", "CS101", 1);
       testStudent.Save();
       testCourse.Save();
       testCourse.AddStudent(testStudent);

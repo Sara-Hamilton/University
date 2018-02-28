@@ -9,12 +9,14 @@ namespace University.Models
     private int _id;
     private string _name;
     private DateTime _enrollDate;
+    private int _departmentId;
 
-    public Student(string name, DateTime date, int id = 0)
+    public Student(string name, DateTime date, int departmentId = 0, int id = 0)
     {
       _id = id;
       _name = name;
       _enrollDate = date;
+      _departmentId = departmentId;
     }
 
     public int GetId()
@@ -42,6 +44,16 @@ namespace University.Models
       _enrollDate = date;
     }
 
+    public int GetDepartmentId()
+    {
+      return _departmentId;
+    }
+
+    public void SetDepartmentId(int departmentId)
+    {
+      _departmentId = departmentId;
+    }
+
     public override bool Equals(System.Object otherStudent)
     {
       if (!(otherStudent is Student))
@@ -51,7 +63,7 @@ namespace University.Models
       else
       {
         Student newStudent = (Student) otherStudent;
-        return _id == newStudent._id && _name == newStudent._name && _enrollDate == newStudent._enrollDate;
+        return _id == newStudent._id && _name == newStudent._name && _enrollDate == newStudent._enrollDate && _departmentId == newStudent._departmentId;
       }
     }
 
@@ -66,9 +78,10 @@ namespace University.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"INSERT INTO students (name, enroll_date) VALUES (@name, @date)";
+      cmd.CommandText = @"INSERT INTO students (name, enroll_date, department_id) VALUES (@name, @date, @departmentId)";
       cmd.Parameters.Add(new MySqlParameter("@name", _name));
       cmd.Parameters.Add(new MySqlParameter("@date", _enrollDate));
+      cmd.Parameters.Add(new MySqlParameter("@departmentId", _departmentId));
       cmd.ExecuteNonQuery();
 
       _id = (int)cmd.LastInsertedId;
@@ -93,7 +106,8 @@ namespace University.Models
         int studentId = rdr.GetInt32(0);
         string studentName = rdr.GetString(1);
         DateTime date = rdr.GetDateTime(2);
-        Student newStudent = new Student(studentName, date, studentId);
+        int departmentId = rdr.GetInt32(3);
+        Student newStudent = new Student(studentName, date, departmentId, studentId);
         allStudents.Add(newStudent);
       }
 
@@ -132,15 +146,17 @@ namespace University.Models
       int studentId = 0;
       string studentName = "";
       DateTime studentEnrollDate = DateTime.Now;
+      int departmentId = 0;
 
       while (rdr.Read())
       {
         studentId = rdr.GetInt32(0);
         studentName = rdr.GetString(1);
         studentEnrollDate = rdr.GetDateTime(2);
+        departmentId = rdr.GetInt32(3);
       }
 
-      Student foundStudent = new Student(studentName, studentEnrollDate, studentId);
+      Student foundStudent = new Student(studentName, studentEnrollDate, departmentId, studentId);
 
       conn.Close();
       if (conn !=null)
@@ -192,7 +208,8 @@ namespace University.Models
         int courseId = rdr.GetInt32(0);
         string courseName = rdr.GetString(1);
         string courseNumber = rdr.GetString(2);
-        Course newCourse = new Course(courseName, courseNumber, courseId);
+        int departmentId = rdr.GetInt32(3);
+        Course newCourse = new Course(courseName, courseNumber, departmentId, courseId);
         courses.Add(newCourse);
       }
 

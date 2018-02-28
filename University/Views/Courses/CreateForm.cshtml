@@ -1,3 +1,7 @@
+@{
+  Layout = "_Layout";
+}
+
 <h1>University</h1>
 <h2>Add new course</h2>
 <hr />
@@ -6,6 +10,15 @@
   <input id="course-name" name="course-name" type="text">
   <label for="course-number">Course number:</label>
   <input id="course-number" name="course-number" type="text">
+
+  <label for="department-id">Department:</label>
+  <select class="" name="department-id">
+    @foreach(var department in Model)
+    {
+      <option value='@department.GetId()'>@department.GetName()</option>
+    }
+  </select>
+
   <button type="submit">Add</button>
 </form>
 <h4><a href="/">Return home</a></h4>
