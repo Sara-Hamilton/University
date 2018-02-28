@@ -1,6 +1,6 @@
 # University
 
-#### .NET MVC app that tracks students and courses in a database, 2-23-18
+#### .NET MVC app that tracks students and courses in a database, 2-27-18
 
 #### _By Sara Hamilton and Cameron Anderson_
 
